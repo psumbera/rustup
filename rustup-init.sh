@@ -26,7 +26,7 @@ is_zsh() {
 set -u
 
 # If RUSTUP_UPDATE_ROOT is unset or empty, default it.
-RUSTUP_UPDATE_ROOT="${RUSTUP_UPDATE_ROOT:-https://static.rust-lang.org/rustup}"
+RUSTUP_UPDATE_ROOT="${RUSTUP_UPDATE_ROOT:-https://github.com/psumbera/solaris-rust/releases/download}"
 # Set quiet as a global for ease of use
 RUSTUP_QUIET=no
 
@@ -88,14 +88,14 @@ main() {
     esac
 
     local _url
+    local _openssl_ver
+    _openssl_ver=`elfdump -d /usr/bin/openssl | grep libssl | gsed 's;^.*so\.;;'`
     if [ "${RUSTUP_VERSION+set}" = 'set' ]; then
         say "\`RUSTUP_VERSION\` has been set to \`${RUSTUP_VERSION}\`"
-        _url="${RUSTUP_UPDATE_ROOT}/archive/${RUSTUP_VERSION}"
+        _url="${RUSTUP_UPDATE_ROOT}/rustup-${RUSTUP_VERSION}/rustup-init-${RUSTUP_VERSION}-`mach`-openssl${_openssl_ver}"
     else
-        _url="${RUSTUP_UPDATE_ROOT}/dist"
+        _url="${RUSTUP_UPDATE_ROOT}/rustup-20251114/rustup-init-20251114-`mach`-openssl${_openssl_ver}"
     fi
-    _url="${_url}/${_arch}/rustup-init${_ext}"
-
 
     local _dir
     if ! _dir="$(ensure mktemp -d)"; then
